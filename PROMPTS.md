@@ -244,6 +244,23 @@ I reproduced the scenario by stopping the backend, which now shows "Server offli
 
   119 frontend tests in total.
 
+## 16. 3D keys, theme note and favicon cache
+
+**Prompt (translated):**
+> Everything is great. As a final touch, maybe we can add depth to the calculator keys and so on; I think that would be cute too, like 3D. Also, the website icon still hasn't changed and I couldn't figure out why. Didn't we add a favicon?
+>
+> One more thing: let's write a note somewhere in a corner saying the theme changes when you refresh, so people know. Would that be bad?
+
+**Outcome:**
+- **3D keycaps:** every key now has a visible front side, a darker band whose colour is mixed from the key's own colour with `color-mix()`, so it works in all five themes.
+  - Pressing a key sinks it by its full depth: the side disappears and the label moves down with it.
+  - Hover slightly brightens the top face.
+- **Depth elsewhere:** the window got a shaded body edge and a deeper drop shadow, and the LCD screen is recessed further.
+- **Theme note:** a quiet line names the current theme and says that refreshing gives a new look, e.g. "Peach Soda theme · refresh the page for a new look".
+  - On wide screens it sits in the bottom-right corner.
+  - On narrow screens it follows the calculator, so it can never cover the keys.
+- **Favicon:** the files and `<link>` tags were correct. Safari keeps favicons in its own cache, separate from the page cache, and was still showing the old Vite icon for `localhost`. The favicon URLs now carry a version query (`?v=2`), so browsers fetch the new icon.
+
 ---
 
 *(New prompts will be appended below as the work continues. Only prompts that shaped the project itself are logged; routine Git/tooling questions are omitted.)*

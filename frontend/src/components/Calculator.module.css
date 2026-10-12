@@ -2,12 +2,16 @@
    element itself would be clipped away too. */
 .frame {
   width: min(100%, 340px);
-  filter: drop-shadow(calc(var(--px) * 2) calc(var(--px) * 2) 0 var(--drop-shadow));
+  filter: drop-shadow(calc(var(--px) * 3) calc(var(--px) * 3) 0 var(--drop-shadow));
 }
 
-/* The window: an outlined box whose corners are notched by one pixel unit. */
+/* The window: an outlined box whose corners are notched by one pixel unit.
+   A shaded band on the right and bottom gives the body some thickness. */
 .window {
   background: var(--window);
+  box-shadow:
+    inset calc(var(--px) * -2) 0 0 var(--window-shade),
+    inset 0 calc(var(--px) * -2) 0 var(--window-shade);
   border: var(--px) solid var(--outline);
   clip-path: polygon(
     var(--px) 0,

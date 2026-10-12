@@ -7,10 +7,10 @@ import App from './App.tsx'
 import { applyRandomTheme } from './theme/theme'
 
 // Before the first render, so the page never flashes another theme.
-applyRandomTheme()
+const theme = applyRandomTheme()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <App theme={theme} />
   </StrictMode>,
 )

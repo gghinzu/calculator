@@ -3,6 +3,15 @@
 export const THEMES = ['strawberry', 'matcha', 'peach-soda', 'lemon-sky', 'cherry-cola'] as const
 export type ThemeName = (typeof THEMES)[number]
 
+/** Names shown to the user. */
+export const THEME_LABELS: Record<ThemeName, string> = {
+  strawberry: 'Strawberry',
+  matcha: 'Matcha',
+  'peach-soda': 'Peach Soda',
+  'lemon-sky': 'Lemon Sky',
+  'cherry-cola': 'Cherry Cola',
+}
+
 const STORAGE_KEY = 'retro-calculator:last-theme'
 
 /** Picks a random theme, never the same one twice in a row. */

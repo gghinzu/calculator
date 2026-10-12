@@ -8,8 +8,10 @@
   background: var(--screen);
   border: var(--px) solid var(--outline);
   /* Recessed: shadow top-left, light bottom-right. */
+  /* Recessed into the body: a deep shadow top-left, light catching the
+     bottom-right edge. */
   box-shadow:
-    inset var(--px) var(--px) 0 var(--screen-shade),
+    inset calc(var(--px) * 2) calc(var(--px) * 2) 0 var(--screen-shade),
     inset calc(var(--px) * -1) calc(var(--px) * -1) 0 var(--window-light);
   color: var(--screen-ink);
 }

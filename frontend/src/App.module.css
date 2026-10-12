@@ -19,6 +19,24 @@
   color: var(--desk-ink);
 }
 
+/* Small and quiet: tells visitors the colours and icons are random, and
+   which theme they got. On wide screens it sits in the bottom-right corner;
+   on narrow ones it follows the calculator so it can never cover it. */
+.themeNote {
+  margin: 0;
+  font-size: 16px;
+  color: var(--desk-ink);
+  opacity: 0.75;
+}
+
+@media (min-width: 700px) {
+  .themeNote {
+    position: fixed;
+    right: 16px;
+    bottom: 12px;
+  }
+}
+
 /* On touch screens there is no keyboard to mention. */
 @media (hover: none) {
   .hint {
