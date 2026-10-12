@@ -7,13 +7,18 @@ COVERAGE_DIR := docs/coverage
 help: ## List the available commands
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*## "} {printf "  make %-14s %s\n", $$1, $$2}'
 
-install: ## Install frontend dependencies (the backend has none)
+install: frontend/node_modules ## Install frontend dependencies (the backend has none)
+
+# Installed automatically by the targets that need them, so `make test` works
+# on a fresh clone. Re-runs only when the lockfile changes.
+frontend/node_modules: frontend/package-lock.json
 	cd frontend && npm ci
+	@touch $@
 
 dev-backend: ## Run the API on http://localhost:8080
 	cd backend && go run ./cmd
 
-dev-frontend: ## Run the UI on http://localhost:5173 (proxies /api to :8080)
+dev-frontend: frontend/node_modules ## Run the UI on http://localhost:5173 (proxies /api to :8080)
 	cd frontend && npm run dev
 
 test: test-backend test-frontend ## Run all tests
@@ -21,14 +26,14 @@ test: test-backend test-frontend ## Run all tests
 test-backend: ## Backend: gofmt, vet and tests with the race detector
 	cd backend && test -z "$$(gofmt -l .)" && go vet ./... && go test -race ./...
 
-test-frontend: ## Frontend: lint, type-check/build and tests
+test-frontend: frontend/node_modules ## Frontend: lint, type-check/build and tests
 	cd frontend && npm run lint && npm run build && npm test
 
-lint: ## Lint both layers
+lint: frontend/node_modules ## Lint both layers
 	cd backend && test -z "$$(gofmt -l .)" && go vet ./...
 	cd frontend && npm run lint
 
-coverage: ## Regenerate the coverage reports in docs/coverage
+coverage: frontend/node_modules ## Regenerate the coverage reports in docs/coverage
 	mkdir -p $(COVERAGE_DIR)
 	cd backend && go test -coverpkg=./internal/...,./pkg/... -coverprofile=coverage.out ./... \
 		&& go tool cover -html=coverage.out -o ../$(COVERAGE_DIR)/backend.html \
