@@ -3,6 +3,8 @@ package router
 import (
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -11,7 +13,7 @@ import (
 )
 
 func newTestRouter(corsOrigin string) http.Handler {
-	return New(handler.NewCalculatorHandler(service.NewCalculatorService()), corsOrigin)
+	return New(handler.NewCalculatorHandler(service.NewCalculatorService()), Options{CORSOrigin: corsOrigin})
 }
 
 func TestRoutes(t *testing.T) {
@@ -109,6 +111,82 @@ func TestCORS(t *testing.T) {
 		newTestRouter("http://localhost:5173").ServeHTTP(rec, httptest.NewRequest("OPTIONS", "/api/v1/add", nil))
 		if rec.Code != http.StatusNoContent {
 			t.Fatalf("status = %d, want 204", rec.Code)
+		}
+	})
+}
+
+func newStaticRouter(t *testing.T) http.Handler {
+	t.Helper()
+	dir := t.TempDir()
+	if err := os.MkdirAll(filepath.Join(dir, "assets"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	files := map[string]string{
+		"index.html":         "<!doctype html><title>Retro Calculator</title>",
+		"assets/app-abc1.js": "console.log('hi')",
+	}
+	for name, body := range files {
+		if err := os.WriteFile(filepath.Join(dir, name), []byte(body), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	return New(handler.NewCalculatorHandler(service.NewCalculatorService()), Options{StaticDir: dir})
+}
+
+func TestStaticFrontend(t *testing.T) {
+	r := newStaticRouter(t)
+	serve := func(method, path, body string) *httptest.ResponseRecorder {
+		rec := httptest.NewRecorder()
+		r.ServeHTTP(rec, httptest.NewRequest(method, path, strings.NewReader(body)))
+		return rec
+	}
+
+	t.Run("serves index.html at the root without caching", func(t *testing.T) {
+		rec := serve("GET", "/", "")
+		if rec.Code != http.StatusOK || !strings.Contains(rec.Body.String(), "Retro Calculator") {
+			t.Fatalf("got %d %q", rec.Code, rec.Body.String())
+		}
+		if got := rec.Header().Get("Cache-Control"); got != "no-cache" {
+			t.Fatalf("Cache-Control = %q", got)
+		}
+	})
+
+	t.Run("caches hashed assets for good", func(t *testing.T) {
+		rec := serve("GET", "/assets/app-abc1.js", "")
+		if rec.Code != http.StatusOK {
+			t.Fatalf("status = %d", rec.Code)
+		}
+		if got := rec.Header().Get("Cache-Control"); !strings.Contains(got, "immutable") {
+			t.Fatalf("Cache-Control = %q", got)
+		}
+	})
+
+	t.Run("the API still works next to the frontend", func(t *testing.T) {
+		rec := serve("POST", "/api/v1/add", `{"a":1,"b":2}`)
+		if rec.Code != http.StatusOK || !strings.Contains(rec.Body.String(), `"result":3`) {
+			t.Fatalf("got %d %s", rec.Code, rec.Body.String())
+		}
+		if serve("GET", "/health", "").Code != http.StatusOK {
+			t.Fatal("health check failed")
+		}
+	})
+
+	t.Run("unknown API paths stay JSON errors, never HTML", func(t *testing.T) {
+		for _, tc := range []struct{ method, path, code string }{
+			{"POST", "/api/v1/modulo", "route_not_found"},
+			{"GET", "/api/v1/add", "method_not_allowed"},
+			{"GET", "/api", "route_not_found"},
+		} {
+			rec := serve(tc.method, tc.path, "")
+			if !strings.Contains(rec.Body.String(), `"code":"`+tc.code+`"`) {
+				t.Fatalf("%s %s: got %d %s", tc.method, tc.path, rec.Code, rec.Body.String())
+			}
+		}
+	})
+
+	t.Run("missing static files are 404", func(t *testing.T) {
+		if rec := serve("GET", "/nope.png", ""); rec.Code != http.StatusNotFound {
+			t.Fatalf("status = %d", rec.Code)
 		}
 	})
 }

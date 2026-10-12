@@ -1,0 +1,10 @@
+# Convenience wrapper around the Dockerfile:
+#   docker compose up --build
+# then open http://localhost:8080
+services:
+  calculator:
+    build: .
+    image: retro-calculator
+    ports:
+      - "8080:8080"
+    restart: unless-stopped

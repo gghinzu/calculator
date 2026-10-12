@@ -291,6 +291,33 @@ I reproduced the scenario by stopping the backend, which now shows "Server offli
 
 **Outcome:** A minimized window now shows only its title. The whole title bar becomes a single "Restore Calculator" button, like a taskbar entry, and the minimize, maximize and close controls are hidden until the window is restored. The earlier "maximize also restores a minimized window" behaviour was removed. Tests check that no size or close controls are available while the window is minimized.
 
+## 20. Shadow left behind after closing (Safari)
+
+**Prompt (translated):**
+> When I close it, its shadows like these stay behind. *(screenshot: dark outlines of the window's drop shadow left on the desktop in Safari, at both the normal and the maximized size)*
+
+**Outcome:** This is a Safari repaint bug. When an element with `filter: drop-shadow` is removed, Safari doesn't always repaint the area the shadow covered. The window's hard pixel shadow is now drawn as a plain shape behind the window instead of with a filter. It sits in a `::before` layer clipped to the same notched outline and offset by three pixel units, so there is no filter left for Safari to mishandle. The desktop icon's small filter shadow was removed for the same reason.
+
+## 21. Docker
+
+**Prompt:** No new prompt. This step implements the Docker decision in section 3 ("I've never set it up on my own… I'll need your help").
+
+**Outcome:**
+- **One image, one origin:** the Go server can now also serve the built frontend when `STATIC_DIR` is set, so a single container serves the UI and the API from the same address. No CORS is needed, and the frontend's same-origin API calls work unchanged.
+  - API paths (`/api/…`, `/health`) are routed separately from static files, so an unknown API path is still a JSON 404, never an HTML page.
+  - Vite's hashed assets are cached for a year; `index.html` is revalidated on every load.
+- **Multi-stage `Dockerfile`:**
+  1. Node 22 builds the frontend (dependency manifests are copied first, so `npm ci` is cached).
+  2. Go 1.24 compiles a static, stripped binary.
+  3. The runtime image is `distroless/static:nonroot`: no shell or package manager, and it runs as an unprivileged user.
+- **Health check:** the runtime image has no `curl`, so the server binary has a `healthcheck` mode that Docker's `HEALTHCHECK` calls.
+- **Graceful stop:** `docker stop` sends SIGTERM, which the server already handles.
+- **Extras:**
+  - `compose.yaml` for `docker compose up --build`.
+  - A `.dockerignore` that keeps `node_modules`, build outputs and Git history out of the build context.
+- **Verification:** the AI's sandbox cannot pull images from Docker Hub, so it ran every Dockerfile step manually with the same commands and tested the result: index served without caching, hashed assets immutable, favicon, API, JSON 404 for unknown API paths, the healthcheck exit codes, and graceful shutdown. A new **Docker image** CI job builds the real image on GitHub's runners on every pull request, waits for the container to report healthy, and checks that both the page and an API call work.
+- **Tests:** backend tests cover static serving, cache headers and keeping API errors as JSON next to the frontend, as well as the healthcheck command. Backend coverage is 99.5%.
+
 ---
 
 *(New prompts will be appended below as the work continues. Only prompts that shaped the project itself are logged; routine Git/tooling questions are omitted.)*
