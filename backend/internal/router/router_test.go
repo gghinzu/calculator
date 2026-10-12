@@ -42,6 +42,51 @@ func TestRoutes(t *testing.T) {
 	}
 }
 
+func TestRouteErrorsUseJSONEnvelope(t *testing.T) {
+	r := newTestRouter("")
+	cases := []struct {
+		name, method, path  string
+		wantStatus          int
+		wantCode, wantAllow string
+	}{
+		{"unknown path", "POST", "/api/v1/modulo", http.StatusNotFound, "route_not_found", ""},
+		{"root path", "GET", "/", http.StatusNotFound, "route_not_found", ""},
+		{"wrong method", "GET", "/api/v1/add", http.StatusMethodNotAllowed, "method_not_allowed", "POST"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			rec := httptest.NewRecorder()
+			r.ServeHTTP(rec, httptest.NewRequest(tc.method, tc.path, nil))
+
+			if rec.Code != tc.wantStatus {
+				t.Fatalf("status = %d, want %d", rec.Code, tc.wantStatus)
+			}
+			if ct := rec.Header().Get("Content-Type"); ct != "application/json" {
+				t.Fatalf("Content-Type = %q, want application/json", ct)
+			}
+			if !strings.Contains(rec.Body.String(), `"code":"`+tc.wantCode+`"`) {
+				t.Fatalf("body = %s, want code %s", rec.Body.String(), tc.wantCode)
+			}
+			if got := rec.Header().Get("Allow"); got != tc.wantAllow {
+				t.Fatalf("Allow = %q, want %q", got, tc.wantAllow)
+			}
+		})
+	}
+}
+
+func TestNonErrorUnmatchedResponsesPassThrough(t *testing.T) {
+	// The mux answers unclean paths with a redirect rather than a 404.
+	rec := httptest.NewRecorder()
+	newTestRouter("").ServeHTTP(rec, httptest.NewRequest("GET", "/api//v1/add", nil))
+
+	if rec.Code != http.StatusMovedPermanently {
+		t.Fatalf("status = %d, want 301", rec.Code)
+	}
+	if loc := rec.Header().Get("Location"); loc != "/api/v1/add" {
+		t.Fatalf("Location = %q, want /api/v1/add", loc)
+	}
+}
+
 func TestCORS(t *testing.T) {
 	t.Run("disabled by default", func(t *testing.T) {
 		rec := httptest.NewRecorder()

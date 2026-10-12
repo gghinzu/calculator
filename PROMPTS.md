@@ -75,7 +75,7 @@ The original prompts were written in Turkish. They are translated to English bel
 
 ## 7. Backend: calculator service
 
-**Prompt:** Implement the backend core based on the decisions above. *(step-by-step implementation request)*
+**Prompt:** No new prompt. This step implements the decisions in sections 3–5.
 
 **Outcome:** The AI generated `internal/domain/service`, which I reviewed:
 - `CalculatorServicePort` interface plus a stateless `CalculatorService`, following the port pattern of my earlier project.
@@ -86,8 +86,7 @@ The original prompts were written in Turkish. They are translated to English bel
 
 ## 8. Backend: HTTP API
 
-**Prompt (translated):**
-> I merged it. Meanwhile, keep writing the prompts file too, don't forget it when needed.
+**Prompt:** No new prompt. This step implements the decisions in sections 3–5.
 
 **Outcome:** The AI built the HTTP layer on the same layered architecture as my earlier project (`cmd → router → handler → service`, plus `dto`, `server` response envelope, and centralized errors). It uses only the standard library:
 - Go 1.22+ method-aware `net/http` routing replaces Gin, and `os.Getenv` replaces viper. The old `internal/error` package is renamed to `apperror` so it doesn't shadow Go's built-in `error`.
@@ -103,7 +102,7 @@ The original prompts were written in Turkish. They are translated to English bel
 
 ## 9. Continuous integration
 
-**Prompt:** Add CI before starting the frontend, so every pull request is verified automatically. *(step-by-step implementation request)*
+**Prompt:** None from me. The AI suggested adding CI before the frontend so every pull request is verified automatically, and I agreed.
 
 **Outcome:** The AI added a GitHub Actions workflow (`.github/workflows/ci.yml`) that runs on every pull request and on pushes to `main`. The backend job:
 - checks `gofmt` formatting
@@ -112,6 +111,30 @@ The original prompts were written in Turkish. They are translated to English bel
 - writes the coverage total to the job summary
 
 A frontend job will be added together with the frontend.
+
+## 10. Review before the frontend
+
+**Prompt (translated):**
+> Is everything OK so far? Before moving to the frontend, let's go over everything we did, logically. Is everything correct, sensible and as we discussed? And did CI work?
+
+**Outcome:** The AI checked the merged `main` branch against the decisions above and confirmed CI passed on the pull request. It reported three findings:
+1. Some "Prompt" lines in this file described requests I never actually wrote.
+2. Unknown routes (404) and wrong methods (405) returned Go's plain-text responses instead of the JSON error envelope.
+3. Rounding to 15 significant digits means very long numbers cannot be represented exactly. This is a float64 limitation.
+
+It also raised an open UI question: what `200 + 10 %` should mean.
+
+**Follow-up prompt (translated):**
+> The prompts file should be accurate and honest anyway; I only said not to include unnecessary things. Let's fix the second issue too, so it's nice. For the third, OK, it can be a known limitation, but the frontend must never show the user anything nonsensical. For the fourth, let's do what the iPhone does; that made more sense.
+
+**Outcome:**
+- This file was corrected so that every "Prompt" entry is either my actual words or explicitly marked as "no new prompt".
+- 404 and 405 now return the JSON envelope with `route_not_found` / `method_not_allowed`. The `Allow` header is preserved, and other mux responses (e.g. path-cleanup redirects) pass through unchanged.
+- **Precision:** documented as a known limitation. The frontend will format every result so the user never sees float artifacts, overly long numbers, `NaN`/`Infinity`, or `-0`. It will switch to exponent notation when a number does not fit the display.
+- **Percentage key, iPhone-style:**
+  - In `a + b %` and `a − b %`, `b %` means *b percent of a*, so `200 + 10 % = 220`.
+  - In `a × b %` and `a ÷ b %`, `b %` means `b / 100`.
+  - On its own, `b %` gives `b / 100`.
 
 ---
 
