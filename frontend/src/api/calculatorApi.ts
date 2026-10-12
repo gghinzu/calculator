@@ -118,6 +118,12 @@ async function post(path: string, body: unknown, options: RequestOptions): Promi
   if (isErrorBody(payload)) {
     throw new ApiError(payload.error.code as ApiErrorCode, payload.error.message, response.status)
   }
+  // The backend always answers in JSON. A 5xx without our envelope comes from
+  // something in front of it (the Vite dev proxy, a gateway) that could not
+  // reach it, so for the user the server is simply unreachable.
+  if (response.status >= 500) {
+    throw new ApiError('network_error', 'Could not reach the server.', response.status)
+  }
   throw invalidResponse(response.status)
 }
 

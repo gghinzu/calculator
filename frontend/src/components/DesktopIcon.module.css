@@ -1,0 +1,37 @@
+/* A classic desktop shortcut: pixel icon above a label. */
+.icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--px) * 2);
+  padding: calc(var(--px) * 3);
+  border: var(--px) dashed transparent;
+  background: none;
+  color: var(--desk-ink);
+  cursor: pointer;
+}
+
+.sprite {
+  display: block;
+  filter: drop-shadow(var(--px) var(--px) 0 var(--drop-shadow));
+}
+
+.label {
+  padding: 0 calc(var(--px) * 2);
+  font-size: 22px;
+}
+
+.icon:hover .label,
+.icon:focus-visible .label {
+  background: var(--title);
+  color: var(--title-ink);
+}
+
+.icon:focus-visible {
+  outline: none;
+  border-color: var(--desk-ink);
+}
+
+.icon:active .sprite {
+  transform: translateY(var(--px));
+}

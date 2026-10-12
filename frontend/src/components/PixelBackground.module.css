@@ -1,0 +1,61 @@
+.background {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.svg {
+  display: block;
+}
+
+/* Dim on purpose: the calculator should be the brightest thing on screen. */
+.drifter {
+  position: absolute;
+  left: var(--x);
+  top: 100vh;
+  opacity: 0.45;
+  animation: drift var(--duration) linear var(--delay) infinite;
+}
+
+/* From just below the bottom edge to just above the top edge. */
+@keyframes drift {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(calc(-100vh - 100%));
+  }
+}
+
+.sparkle {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  opacity: 0;
+  animation: twinkle 3s steps(3) var(--delay) infinite;
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+/* Without motion the sprites rest where they are, still dim. */
+@media (prefers-reduced-motion: reduce) {
+  .drifter {
+    top: var(--y);
+    animation: none;
+  }
+
+  .sparkle {
+    animation: none;
+    opacity: 0.35;
+  }
+}

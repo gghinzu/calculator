@@ -98,7 +98,17 @@ describe('calculate', () => {
   })
 
   it.each([
-    ['a non-JSON body', new Response('<html>Bad Gateway</html>', { status: 502 })],
+    ['an empty 500 from the dev proxy', new Response('', { status: 500, headers: { 'Content-Type': 'text/plain' } })],
+    ['an HTML 502 from a gateway', new Response('<html>Bad Gateway</html>', { status: 502 })],
+  ])('treats %s as the server being unreachable', async (_name, response) => {
+    fetchMock.mockResolvedValue(response)
+
+    await expectApiError(calculate('add', 1, 2), 'network_error', response.status)
+  })
+
+  it.each([
+    ['a non-JSON body', new Response('<html>hello</html>', { status: 200 })],
+    ['a non-JSON 404', new Response('Not Found', { status: 404 })],
     ['a JSON body with an unknown shape', jsonResponse(200, { hello: 'world' })],
     ['a success body with a non-finite result', jsonResponse(200, { success: true, data: { result: null } })],
     ['a success body on an error status', jsonResponse(500, { success: true, data: { operation: 'add', result: 1 } })],

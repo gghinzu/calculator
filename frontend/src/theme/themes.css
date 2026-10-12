@@ -1,0 +1,161 @@
+/* Colour themes. One is picked at random on every page load (see theme.ts);
+   :root holds Strawberry as the fallback if JavaScript has not run yet.
+   Every theme pairs a dim desktop with a brighter pastel calculator, so the
+   calculator always stays the focal point. Each block must define the same
+   set of variables (enforced by theme.test.ts). */
+
+:root,
+[data-theme='strawberry'] {
+  --desk: #1f3440;
+  --desk-dither: #233a47;
+  --desk-ink: #b9cfca;
+  --sprite-1: #f4a6c0;
+  --sprite-2: #9fdcc4;
+  --sprite-3: #f6dc8a;
+  --sprite-4: #fff3e3;
+  --window: #fbf1e3;
+  --window-light: #fffaf3;
+  --window-shade: #dcc8ad;
+  --outline: #3a3238;
+  --drop-shadow: #12212a;
+  --title: #ec88ab;
+  --title-light: #f7b6cc;
+  --title-shade: #c45f85;
+  --title-ink: #ffffff;
+  --screen: #c3ead7;
+  --screen-shade: #93cfb5;
+  --screen-ink: #1f5246;
+  --screen-dim: #4b8573;
+  --screen-error: #b8325f;
+  --key: #fff8ee;
+  --key-light: #ffffff;
+  --key-shade: #d8c4a8;
+  --key-ink: #4a3f45;
+  --key-operator: #d3f0e2;
+  --key-function: #fbe8b4;
+  --focus: #1f5246;
+}
+
+[data-theme='matcha'] {
+  --desk: #1e2a22;
+  --desk-dither: #233127;
+  --desk-ink: #c7d6c0;
+  --sprite-1: #a9d18e;
+  --sprite-2: #f3d9a4;
+  --sprite-3: #f2b8a0;
+  --sprite-4: #fdf6e3;
+  --window: #f6f1e1;
+  --window-light: #fffcf2;
+  --window-shade: #d6ccb0;
+  --outline: #2f3229;
+  --drop-shadow: #121a14;
+  --title: #7fb069;
+  --title-light: #a7cf92;
+  --title-shade: #5d8a4b;
+  --title-ink: #ffffff;
+  --screen: #e2edc4;
+  --screen-shade: #bccf90;
+  --screen-ink: #3a4f1f;
+  --screen-dim: #6b8048;
+  --screen-error: #b2463a;
+  --key: #fffaf0;
+  --key-light: #ffffff;
+  --key-shade: #d6ccb0;
+  --key-ink: #3b3a33;
+  --key-operator: #dcecc8;
+  --key-function: #f6e3b5;
+  --focus: #3a4f1f;
+}
+
+[data-theme='peach-soda'] {
+  --desk: #2b2420;
+  --desk-dither: #312a25;
+  --desk-ink: #e3d2c4;
+  --sprite-1: #ffb38a;
+  --sprite-2: #8fd3d1;
+  --sprite-3: #ffe08a;
+  --sprite-4: #fff1e6;
+  --window: #fff2e6;
+  --window-light: #fffaf5;
+  --window-shade: #e2c6ac;
+  --outline: #3d2c27;
+  --drop-shadow: #17110e;
+  --title: #f08a5d;
+  --title-light: #ffb592;
+  --title-shade: #c9663d;
+  --title-ink: #ffffff;
+  --screen: #c9ecea;
+  --screen-shade: #98d2cf;
+  --screen-ink: #1f4f4d;
+  --screen-dim: #4f8582;
+  --screen-error: #c23b3b;
+  --key: #fff8f1;
+  --key-light: #ffffff;
+  --key-shade: #e2c6ac;
+  --key-ink: #4a3730;
+  --key-operator: #d2efed;
+  --key-function: #ffe7b3;
+  --focus: #1f4f4d;
+}
+
+[data-theme='lemon-sky'] {
+  --desk: #1c2b3a;
+  --desk-dither: #213244;
+  --desk-ink: #c9d9e6;
+  --sprite-1: #ffe27a;
+  --sprite-2: #9ccff0;
+  --sprite-3: #f7a8b8;
+  --sprite-4: #fdfbea;
+  --window: #fdfbea;
+  --window-light: #ffffff;
+  --window-shade: #d9d3ae;
+  --outline: #2c3340;
+  --drop-shadow: #0f1720;
+  --title: #4ea6dc;
+  --title-light: #8ccaef;
+  --title-shade: #3383b5;
+  --title-ink: #ffffff;
+  --screen: #fff3b0;
+  --screen-shade: #e8d474;
+  --screen-ink: #5a4a10;
+  --screen-dim: #8a7a38;
+  --screen-error: #c03a52;
+  --key: #ffffff;
+  --key-light: #ffffff;
+  --key-shade: #d2d7de;
+  --key-ink: #39404d;
+  --key-operator: #d9eefa;
+  --key-function: #fff1b8;
+  --focus: #5a4a10;
+}
+
+[data-theme='cherry-cola'] {
+  --desk: #2a1c1f;
+  --desk-dither: #302125;
+  --desk-ink: #e6cfd2;
+  --sprite-1: #f28b8b;
+  --sprite-2: #f9d78c;
+  --sprite-3: #a8d8c6;
+  --sprite-4: #fff0e8;
+  --window: #fff0e8;
+  --window-light: #fffaf6;
+  --window-shade: #e3c3b8;
+  --outline: #3a2528;
+  --drop-shadow: #150c0e;
+  --title: #d9545f;
+  --title-light: #ec8a92;
+  --title-shade: #a93d47;
+  --title-ink: #ffffff;
+  --screen: #f9e0b0;
+  --screen-shade: #e6c27a;
+  --screen-ink: #5c3a12;
+  --screen-dim: #8e6a3e;
+  --screen-error: #b02a3a;
+  --key: #fff8f4;
+  --key-light: #ffffff;
+  --key-shade: #e3c3b8;
+  --key-ink: #4a3236;
+  --key-operator: #f9d6cf;
+  --key-function: #fbe5b0;
+  --focus: #5c3a12;
+}
