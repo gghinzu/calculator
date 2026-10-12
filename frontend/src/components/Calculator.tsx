@@ -9,10 +9,20 @@ import { Keypad } from './Keypad'
 /** How long a key looks pressed after a keyboard shortcut. */
 const PRESS_FLASH_MS = 120
 
-export function Calculator() {
+type CalculatorProps = {
+  /** Called by the window's close button. */
+  onClose: () => void
+  /** Move focus into the window when it appears (e.g. after reopening). */
+  autoFocus?: boolean
+}
+
+export function Calculator({ onClose, autoFocus = false }: CalculatorProps) {
   const { display, expression, isLoading, hasError, dispatch } = useCalculator()
   const [flashedKey, setFlashedKey] = useState<string | null>(null)
+  const [minimized, setMinimized] = useState(false)
+  const [maximized, setMaximized] = useState(false)
   const flashTimer = useRef<number | undefined>(undefined)
+  const windowRef = useRef<HTMLElement>(null)
 
   const press = useCallback(
     (action: CalculatorAction) => {
@@ -22,6 +32,13 @@ export function Calculator() {
   )
 
   useEffect(() => {
+    if (autoFocus) windowRef.current?.focus()
+  }, [autoFocus])
+
+  useEffect(() => {
+    // A minimized calculator must not take keyboard input it can't show.
+    if (minimized) return
+
     function onKeyDown(event: KeyboardEvent) {
       if (event.ctrlKey || event.metaKey || event.altKey) return
       const key: KeyDefinition | undefined = keyForShortcut(event.key)
@@ -40,23 +57,46 @@ export function Calculator() {
     window.addEventListener('keydown', onKeyDown)
     return () => {
       window.removeEventListener('keydown', onKeyDown)
+      // Cancelling the timer must not leave a key stuck in the pressed look.
       window.clearTimeout(flashTimer.current)
+      setFlashedKey(null)
     }
-  }, [press])
+  }, [press, minimized])
 
   return (
-    <div className={styles.frame}>
-      <section className={styles.window} aria-label="Calculator">
+    <div className={`${styles.frame} ${maximized ? styles.maximized : ''}`}>
+      <section ref={windowRef} className={styles.window} aria-label="Calculator" tabIndex={-1}>
         <header className={styles.titleBar}>
           <h1 className={styles.title}>Calculator</h1>
-          <div className={styles.titleButtons} aria-hidden="true">
-            <span className={`${styles.titleButton} ${styles.minimize}`} />
-            <span className={`${styles.titleButton} ${styles.maximize}`} />
-            <span className={`${styles.titleButton} ${styles.close}`} />
+          <div className={styles.titleButtons}>
+            <button
+              type="button"
+              className={`${styles.titleButton} ${styles.minimize}`}
+              aria-label={minimized ? 'Restore' : 'Minimize'}
+              aria-expanded={!minimized}
+              onClick={() => setMinimized((m) => !m)}
+            />
+            <button
+              type="button"
+              className={`${styles.titleButton} ${styles.maximize}`}
+              aria-label={maximized ? 'Restore size' : 'Maximize'}
+              aria-pressed={maximized}
+              onClick={() => {
+                setMaximized((m) => !m)
+                setMinimized(false)
+              }}
+            />
+            <button
+              type="button"
+              className={`${styles.titleButton} ${styles.close}`}
+              aria-label="Close"
+              onClick={onClose}
+            />
           </div>
         </header>
 
-        <div className={`${styles.body} ${hasError ? styles.shake : ''}`}>
+        {/* Hidden rather than unmounted, so the number on screen survives. */}
+        <div className={`${styles.body} ${hasError ? styles.shake : ''}`} hidden={minimized}>
           <Display expression={expression} value={display} isLoading={isLoading} hasError={hasError} />
           <Keypad onPress={press} disabled={isLoading} flashedKey={flashedKey} />
         </div>

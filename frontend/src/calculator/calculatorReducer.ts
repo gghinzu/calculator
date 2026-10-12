@@ -158,7 +158,6 @@ export function calculatorReducer(state: CalculatorState, action: CalculatorActi
       if (state.overwrite) return beginNewEntry(state, action.digit)
       if (countDigits(state.entry) >= MAX_INPUT_DIGITS) return state
       if (state.entry === '0') return { ...state, entry: action.digit }
-      if (state.entry === '-0') return { ...state, entry: `-${action.digit}` }
       return { ...state, entry: state.entry + action.digit }
     }
 
@@ -169,6 +168,8 @@ export function calculatorReducer(state: CalculatorState, action: CalculatorActi
     }
 
     case 'toggleSign': {
+      // Zero has no sign: "-0" would be meaningless on the display.
+      if (entryValue(state) === 0) return state
       const entry = state.entry.startsWith('-') ? state.entry.slice(1) : `-${state.entry}`
       return { ...state, entry, entryLabel: null }
     }

@@ -1,8 +1,18 @@
 /* The hard pixel drop shadow lives on a wrapper: a filter on the clipped
    element itself would be clipped away too. */
 .frame {
-  width: min(100%, 340px);
+  width: min(100%, calc(var(--px) * 114));
   filter: drop-shadow(calc(var(--px) * 3) calc(var(--px) * 3) 0 var(--drop-shadow));
+}
+
+/* Every size in the window is a multiple of --px, so maximizing is just a
+   bigger pixel unit. */
+.maximized {
+  --px: 4px;
+}
+
+.window:focus {
+  outline: none;
 }
 
 /* The window: an outlined box whose corners are notched by one pixel unit.
@@ -41,7 +51,7 @@
 
 .title {
   margin: 0;
-  font-size: 24px;
+  font-size: calc(var(--px) * 8);
   font-weight: 400;
   letter-spacing: 0.02em;
 }
@@ -51,13 +61,29 @@
   gap: calc(var(--px) * 2);
 }
 
-/* Decorative window controls, drawn with backgrounds only. */
+/* Window controls, drawn with backgrounds only. */
 .titleButton {
   position: relative;
-  width: calc(var(--px) * 6);
-  height: calc(var(--px) * 6);
+  width: calc(var(--px) * 7);
+  height: calc(var(--px) * 7);
+  padding: 0;
+  border: none;
   background: var(--title-light);
   box-shadow: inset calc(var(--px) * -1) calc(var(--px) * -1) 0 var(--outline);
+  cursor: pointer;
+}
+
+.titleButton:hover {
+  background: color-mix(in srgb, var(--title-light) 70%, white);
+}
+
+.titleButton:active {
+  box-shadow: inset var(--px) var(--px) 0 var(--outline);
+}
+
+.titleButton:focus-visible {
+  outline: var(--px) solid var(--title-ink);
+  outline-offset: 1px;
 }
 
 .titleButton::after {
@@ -67,20 +93,20 @@
 }
 
 .minimize::after {
-  left: var(--px);
+  left: calc(var(--px) * 2);
   right: calc(var(--px) * 2);
   bottom: calc(var(--px) * 2);
   height: var(--px);
 }
 
 .maximize::after {
-  inset: var(--px) calc(var(--px) * 2) calc(var(--px) * 2) var(--px);
+  inset: calc(var(--px) * 2) calc(var(--px) * 2) calc(var(--px) * 2) calc(var(--px) * 2);
   background: transparent;
   box-shadow: inset 0 0 0 var(--px) var(--title-ink);
 }
 
 .close::after {
-  inset: var(--px) calc(var(--px) * 2) calc(var(--px) * 2) var(--px);
+  inset: calc(var(--px) * 2) calc(var(--px) * 2) calc(var(--px) * 2) calc(var(--px) * 2);
   background:
     linear-gradient(45deg, transparent 42%, var(--title-ink) 42% 58%, transparent 58%),
     linear-gradient(-45deg, transparent 42%, var(--title-ink) 42% 58%, transparent 58%);
@@ -92,6 +118,11 @@
   gap: calc(var(--px) * 5);
   padding: calc(var(--px) * 5);
   box-shadow: inset var(--px) var(--px) 0 var(--window-light);
+}
+
+/* `display: flex` above would otherwise override the hidden attribute. */
+.body[hidden] {
+  display: none;
 }
 
 /* A short nudge when a calculation fails. */

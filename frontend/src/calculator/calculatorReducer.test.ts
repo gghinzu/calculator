@@ -70,10 +70,18 @@ describe('typing numbers', () => {
     expect(press('1234567890123456789').entry).toBe('123456789012345')
   })
 
-  it('toggles the sign, including on zero', () => {
+  it('toggles the sign', () => {
     expect(press('5n').entry).toBe('-5')
     expect(press('5nn').entry).toBe('5')
-    expect(press('n7').entry).toBe('-7')
+    expect(press('0.5n').entry).toBe('-0.5')
+  })
+
+  it('does not put a sign in front of zero', () => {
+    expect(press('n').entry).toBe('0')
+    expect(press('n7').entry).toBe('7')
+    expect(press('0.n').entry).toBe('0.')
+    expect(press('0.00n').entry).toBe('0.00')
+    expect(press('3-3=n').entry).toBe('0')
   })
 
   it('deletes the last digit and falls back to 0', () => {

@@ -168,3 +168,78 @@ describe('Calculator', () => {
     expect(display()).toHaveTextContent('0')
   })
 })
+
+describe('Window controls', () => {
+  it('minimize hides the calculator body but keeps its state', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+    await clickKeys(user, '4', '2')
+
+    await user.click(screen.getByRole('button', { name: 'Minimize' }))
+    expect(screen.queryByRole('button', { name: '7' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Restore' })).toHaveAttribute('aria-expanded', 'false')
+
+    await user.click(screen.getByRole('button', { name: 'Restore' }))
+    expect(display()).toHaveTextContent('42')
+  })
+
+  it('ignores the keyboard while minimized', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+    await user.click(screen.getByRole('button', { name: 'Minimize' }))
+
+    await user.keyboard('99')
+    await user.click(screen.getByRole('button', { name: 'Restore' }))
+
+    expect(display()).toHaveTextContent('0')
+  })
+
+  it('does not leave a key looking pressed when minimized mid-flash', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+    await user.keyboard('2')
+    await user.click(screen.getByRole('button', { name: 'Minimize' }))
+    await user.click(screen.getByRole('button', { name: 'Restore' }))
+
+    expect(screen.getByRole('button', { name: '2' }).className).not.toMatch(/pressed/)
+  })
+
+  it('maximize toggles a larger window', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+    const maximize = screen.getByRole('button', { name: 'Maximize' })
+
+    await user.click(maximize)
+    expect(screen.getByRole('button', { name: 'Restore size' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('region', { name: 'Calculator' }).parentElement!.className).toMatch(/maximized/)
+
+    await user.click(screen.getByRole('button', { name: 'Restore size' }))
+    expect(screen.getByRole('button', { name: 'Maximize' })).toHaveAttribute('aria-pressed', 'false')
+  })
+
+  it('maximize also restores a minimized window', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+    await user.click(screen.getByRole('button', { name: 'Minimize' }))
+    await user.click(screen.getByRole('button', { name: 'Maximize' }))
+    expect(screen.getByRole('button', { name: '7' })).toBeVisible()
+  })
+
+  it('close leaves a desktop icon that reopens a fresh calculator', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+    await clickKeys(user, '8')
+
+    await user.click(screen.getByRole('button', { name: 'Close' }))
+    expect(screen.queryByRole('region', { name: 'Calculator' })).not.toBeInTheDocument()
+    const icon = screen.getByRole('button', { name: 'Open Calculator' })
+    expect(icon).toHaveFocus()
+
+    // A closed calculator does not react to the keyboard.
+    await user.keyboard('5')
+
+    await user.click(icon)
+    expect(screen.getByRole('region', { name: 'Calculator' })).toHaveFocus()
+    expect(display()).toHaveTextContent('0')
+  })
+})

@@ -52,7 +52,6 @@ describe('formatEntry', () => {
     ['-1234567', '-1,234,567'],
     ['12.', '12.'],
     ['1234.500', '1,234.500'],
-    ['-0', '-0'],
     ['0.', '0.'],
   ])('keeps what the user typed: %s -> %s', (entry, expected) => {
     expect(formatEntry(entry)).toBe(expected)

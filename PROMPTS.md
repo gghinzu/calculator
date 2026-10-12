@@ -261,6 +261,29 @@ I reproduced the scenario by stopping the backend, which now shows "Server offli
   - On narrow screens it follows the calculator, so it can never cover the keys.
 - **Favicon:** the files and `<link>` tags were correct. Safari keeps favicons in its own cache, separate from the page cache, and was still showing the old Vite icon for `localhost`. The favicon URLs now carry a version query (`?v=2`), so browsers fetch the new icon.
 
+## 17. Working window controls and the favicon, again
+
+**Prompt (translated):**
+> The minimize, maximize and close buttons at the top don't do anything. I don't know if we can add functionality, I didn't think of it. Leaving them as design is a bit misleading, even though they look nice. Should we remove them? Any ideas?
+>
+> *(after the AI suggested making them work or removing them)* OK, let's make them functional. Also, the favicon still isn't working.
+
+**Outcome:**
+- **Minimize:** collapses the window to its title bar. The calculator's state is kept (the body is hidden, not unmounted), and keyboard shortcuts are ignored while it is minimized.
+- **Maximize:** every size in the window is a multiple of the `--px` unit, so maximizing just raises it from 3 px to 4 px and the whole window scales up crisply. Pressing it again restores the size.
+- **Close:** removes the window and leaves a pixel "Calculator" shortcut on the desktop, drawn in the current theme's colours. Clicking it opens a fresh calculator, like relaunching an app.
+- **Accessibility:** the controls are real buttons with accessible names ("Minimize"/"Restore", "Maximize"/"Restore size", "Close"). Focus moves to the desktop icon after closing and back into the window after reopening.
+- **Bug found while testing:** if a key was typed and the window minimized within the 120 ms "pressed" flash, the cancelled timer left that key stuck in the pressed look. The effect cleanup now resets it, and a regression test covers it.
+- **Favicon:** Safari looks for `/favicon.ico` at the site root regardless of the `<link>` tags, and the project had none. A real multi-size `favicon.ico` (16/32/48 px) is now generated from the same pixel design and linked first, with the SVG for other browsers. The redundant 32 px PNG was dropped.
+- 127 frontend tests in total.
+
+## 18. No sign on zero
+
+**Prompt (translated):**
+> Also, the plus-minus sign: I don't think it should be possible to put it in front of 0.
+
+**Outcome:** The ± key now does nothing while the entry is zero (`0`, `0.`, `0.00`, or a result of 0), so the display can never show `-0`. The now-unreachable `-0` input branch was removed, and tests cover the new rule.
+
 ---
 
 *(New prompts will be appended below as the work continues. Only prompts that shaped the project itself are logged; routine Git/tooling questions are omitted.)*
