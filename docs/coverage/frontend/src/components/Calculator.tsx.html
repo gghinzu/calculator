@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">97.22% </span>
+                <span class="strong">97.05% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>35/36</span>
+                <span class='fraction'>33/34</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">90.9% </span>
+                <span class="strong">90% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>10/11</span>
+                <span class='fraction'>9/10</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>30/30</span>
+                <span class='fraction'>28/28</span>
             </div>
         
             
@@ -172,16 +172,7 @@
 <a name='L107'></a><a href='#L107'>107</a>
 <a name='L108'></a><a href='#L108'>108</a>
 <a name='L109'></a><a href='#L109'>109</a>
-<a name='L110'></a><a href='#L110'>110</a>
-<a name='L111'></a><a href='#L111'>111</a>
-<a name='L112'></a><a href='#L112'>112</a>
-<a name='L113'></a><a href='#L113'>113</a>
-<a name='L114'></a><a href='#L114'>114</a>
-<a name='L115'></a><a href='#L115'>115</a>
-<a name='L116'></a><a href='#L116'>116</a>
-<a name='L117'></a><a href='#L117'>117</a>
-<a name='L118'></a><a href='#L118'>118</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L110'></a><a href='#L110'>110</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -205,13 +196,6 @@
 <span class="cline-any cline-yes">91x</span>
 <span class="cline-any cline-yes">91x</span>
 <span class="cline-any cline-yes">91x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">91x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">53x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">91x</span>
 <span class="cline-any cline-yes">19x</span>
@@ -297,8 +281,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { useCallback, useEffect, useRef, useState } from 'react'
-import type { CalculatorAction } from '../calculator/calculatorReducer'
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { useEffect, useRef, useState } from 'react'
 import { keyForShortcut, type KeyDefinition } from '../calculator/keys'
 import { useCalculator } from '../calculator/useCalculator'
 import styles from './Calculator.module.css'
@@ -323,13 +306,6 @@ export function Calculator({ onClose, autoFocus = false }: CalculatorProps) {
   const flashTimer = useRef&lt;number | undefined&gt;(undefined)
   const windowRef = useRef&lt;HTMLElement&gt;(null)
 &nbsp;
-  const press = useCallback(
-    (action: CalculatorAction) =&gt; {
-      dispatch(action)
-    },
-    [dispatch],
-  )
-&nbsp;
   useEffect(() =&gt; {
     if (autoFocus) windowRef.current?.focus()
   }, [autoFocus])
@@ -346,7 +322,7 @@ export function Calculator({ onClose, autoFocus = false }: CalculatorProps) {
       // Stops Enter from also "clicking" a focused key, and "/" from
       // opening the browser's quick-find.
       event.preventDefault()
-      press(key.action)
+      dispatch(key.action)
 &nbsp;
       setFlashedKey(key.id)
       window.clearTimeout(flashTimer.current)
@@ -360,7 +336,7 @@ export function Calculator({ onClose, autoFocus = false }: CalculatorProps) {
       window.clearTimeout(flashTimer.current)
       setFlashedKey(null)
     }
-  }, [press, minimized])
+  }, [dispatch, minimized])
 &nbsp;
   return (
     &lt;div className={`${styles.frame} ${maximized ? styles.maximized : ''}`}&gt;
@@ -408,7 +384,7 @@ export function Calculator({ onClose, autoFocus = false }: CalculatorProps) {
         {/* Hidden rather than unmounted, so the number on screen survives. */}
         &lt;div className={`${styles.body} ${hasError ? styles.shake : ''}`} hidden={minimized}&gt;
           &lt;Display expression={expression} value={display} isLoading={isLoading} hasError={hasError} /&gt;
-          &lt;Keypad onPress={press} disabled={isLoading} flashedKey={flashedKey} /&gt;
+          &lt;Keypad onPress={dispatch} disabled={isLoading} flashedKey={flashedKey} /&gt;
         &lt;/div&gt;
       &lt;/section&gt;
     &lt;/div&gt;
@@ -421,7 +397,7 @@ export function Calculator({ onClose, autoFocus = false }: CalculatorProps) {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-10-12T15:37:41.699Z
+                at 2026-10-12T16:00:48.803Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
