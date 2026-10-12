@@ -336,6 +336,7 @@ I reproduced the scenario by stopping the backend, which now shows "Server offli
 - **Makefile:** one-word commands for development, tests, coverage and Docker (`make help` lists them).
 - **Screenshots** of the calculator and its five themes for the README.
 - The leftover `favicon-32.png` (unused since the switch to `favicon.ico`) is removed.
+- **Final check on a fresh clone:** cloning the branch from GitHub and running `make test` failed on the frontend, because its dependencies were not installed yet, which is exactly what a reviewer would hit. The frontend targets in the `Makefile` now install dependencies automatically (only when `package-lock.json` changes), so one `make test` works from a clean checkout.
 
 ---
 
