@@ -203,6 +203,25 @@ So the `500` came from the Vite dev proxy, and `ECONNREFUSED` confirmed that not
 
 I reproduced the scenario by stopping the backend, which now shows "Server offline". Tests were added for both cases.
 
+## 14. Palette, animated background and favicon
+
+**Prompt (translated):**
+> I checked the functionality as much as I could; I think it works. I think the site should have a background too, and the colour palette shouldn't stay purple, I don't really like purple :) It could be a pixel-art, moving background with relatively lower brightness, so the focus stays on the calculator. Also, let's change the favicon so it isn't the default. The site title can stay as it is, I think. Do you have a suggestion? *(shared a screenshot of my Pinterest board of pastel pixel-art icons)*
+
+**Outcome:**
+- **Palette:** taken from the Pinterest board's pastel pixel art.
+  - The calculator now has a cream body, a pink title bar and `=` key, a mint LCD screen and operator keys, and butter-yellow function keys.
+  - The page behind it is a dim, dithered teal night, so the calculator is the brightest thing on screen.
+  - All colours are CSS variables, so the change touched only the design tokens.
+- **Animated background (`PixelBackground`):**
+  - Pastel pixel hearts, stars, clouds and flowers, drawn as crisp SVG rectangles from small text pixel maps, drift slowly upwards at reduced opacity, with a few twinkling sparkles.
+  - Positions and speeds are fixed rather than random, so the layout is identical on every load and in tests.
+  - It is decorative only: hidden from screen readers and ignores pointer events.
+  - With "reduce motion" enabled, the sprites rest in place.
+- **Favicon:** a 16×16 pixel calculator in the same palette. It ships as SVG, with a 32 px PNG fallback and a 180 px Apple touch icon for Safari and iOS, plus a matching `theme-color`.
+- **Title:** kept as "Retro Calculator", as I suggested; the AI agreed.
+- Background tests were added; 87 frontend tests pass.
+
 ---
 
 *(New prompts will be appended below as the work continues. Only prompts that shaped the project itself are logged; routine Git/tooling questions are omitted.)*

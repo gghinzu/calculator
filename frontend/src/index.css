@@ -1,37 +1,44 @@
-/* Design tokens. One palette, one typeface: a periwinkle pixel window on a
-   soft dithered desktop, inspired by early desktop calculators. */
+/* Design tokens. One palette, one typeface: a pastel pixel window (pink,
+   mint, butter, cream) floating on a dim teal night desktop, so the
+   calculator is the brightest thing on the page. */
 :root {
   /* Pixel unit: every border, bevel and notch is a multiple of this. */
   --px: 3px;
 
-  --desk: #a7aee6;
-  --desk-dither: #9aa2df;
-  --desk-ink: #3d4385;
+  --desk: #1f3440;
+  --desk-dither: #233a47;
+  --desk-ink: #b9cfca;
 
-  --window: #dcdce6;
-  --window-light: #f7f7fc;
-  --window-shade: #a4a4b8;
-  --outline: #5b5b70;
-  --drop-shadow: #6a72b8;
+  --sprite-pink: #f4a6c0;
+  --sprite-mint: #9fdcc4;
+  --sprite-butter: #f6dc8a;
+  --sprite-cream: #fff3e3;
 
-  --title: #6d7be0;
-  --title-light: #97a3f0;
+  --window: #fbf1e3;
+  --window-light: #fffaf3;
+  --window-shade: #dcc8ad;
+  --outline: #3a3238;
+  --drop-shadow: #12212a;
+
+  --title: #ec88ab;
+  --title-light: #f7b6cc;
+  --title-shade: #c45f85;
   --title-ink: #ffffff;
 
-  --screen: #b6c2f8;
-  --screen-shade: #8e9be8;
-  --screen-ink: #343c9c;
-  --screen-dim: #5f68b8;
-  --screen-error: #a8336f;
+  --screen: #c3ead7;
+  --screen-shade: #93cfb5;
+  --screen-ink: #1f5246;
+  --screen-dim: #4b8573;
+  --screen-error: #b8325f;
 
-  --key: #e8e8f0;
+  --key: #fff8ee;
   --key-light: #ffffff;
-  --key-shade: #a9a9bd;
-  --key-ink: #55556a;
-  --key-operator: #d3d9fa;
-  --key-function: #d9d9e4;
+  --key-shade: #d8c4a8;
+  --key-ink: #4a3f45;
+  --key-operator: #d3f0e2;
+  --key-function: #fbe8b4;
 
-  --focus: #343c9c;
+  --focus: #1f5246;
 
   font-family: 'Jersey 10', ui-monospace, monospace;
   color: var(--key-ink);

@@ -56,7 +56,7 @@
   color: var(--title-ink);
   box-shadow:
     inset var(--px) var(--px) 0 var(--title-light),
-    inset calc(var(--px) * -1) calc(var(--px) * -1) 0 var(--screen-ink);
+    inset calc(var(--px) * -1) calc(var(--px) * -1) 0 var(--title-shade);
 }
 
 /* Pressed: the bevel flips and the label sinks one pixel unit. */
@@ -68,7 +68,7 @@
 
 .equals:active:not(:disabled),
 .equals.pressed {
-  box-shadow: inset var(--px) var(--px) 0 var(--screen-ink);
+  box-shadow: inset var(--px) var(--px) 0 var(--title-shade);
 }
 
 .key:disabled {
