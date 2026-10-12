@@ -101,6 +101,18 @@ The original prompts were written in Turkish. They are translated to English bel
 - HTTP server timeouts and graceful shutdown on SIGINT/SIGTERM.
 - Handler, router, middleware, error-mapping and config tests. Total backend coverage is 99.4%.
 
+## 9. Continuous integration
+
+**Prompt:** Add CI before starting the frontend, so every pull request is verified automatically. *(step-by-step implementation request)*
+
+**Outcome:** The AI added a GitHub Actions workflow (`.github/workflows/ci.yml`) that runs on every pull request and on pushes to `main`. The backend job:
+- checks `gofmt` formatting
+- runs `go vet`
+- runs the tests with the race detector and cross-package coverage
+- writes the coverage total to the job summary
+
+A frontend job will be added together with the frontend.
+
 ---
 
 *(New prompts will be appended below as the work continues. Only prompts that shaped the project itself are logged; routine Git/tooling questions are omitted.)*
