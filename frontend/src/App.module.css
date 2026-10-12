@@ -1,0 +1,25 @@
+.desktop {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--px) * 6);
+  padding: 24px 16px;
+}
+
+.hint {
+  margin: 0;
+  max-width: 340px;
+  text-align: center;
+  font-size: 18px;
+  line-height: 1.25;
+  color: var(--desk-ink);
+}
+
+/* On touch screens there is no keyboard to mention. */
+@media (hover: none) {
+  .hint {
+    display: none;
+  }
+}

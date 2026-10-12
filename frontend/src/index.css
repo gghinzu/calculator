@@ -1,0 +1,69 @@
+/* Design tokens. One palette, one typeface: a periwinkle pixel window on a
+   soft dithered desktop, inspired by early desktop calculators. */
+:root {
+  /* Pixel unit: every border, bevel and notch is a multiple of this. */
+  --px: 3px;
+
+  --desk: #a7aee6;
+  --desk-dither: #9aa2df;
+  --desk-ink: #3d4385;
+
+  --window: #dcdce6;
+  --window-light: #f7f7fc;
+  --window-shade: #a4a4b8;
+  --outline: #5b5b70;
+  --drop-shadow: #6a72b8;
+
+  --title: #6d7be0;
+  --title-light: #97a3f0;
+  --title-ink: #ffffff;
+
+  --screen: #b6c2f8;
+  --screen-shade: #8e9be8;
+  --screen-ink: #343c9c;
+  --screen-dim: #5f68b8;
+  --screen-error: #a8336f;
+
+  --key: #e8e8f0;
+  --key-light: #ffffff;
+  --key-shade: #a9a9bd;
+  --key-ink: #55556a;
+  --key-operator: #d3d9fa;
+  --key-function: #d9d9e4;
+
+  --focus: #343c9c;
+
+  font-family: 'Jersey 10', ui-monospace, monospace;
+  color: var(--key-ink);
+  -webkit-font-smoothing: none;
+  font-smooth: never;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background-color: var(--desk);
+  /* 2x2 checker dither, the classic desktop pattern. */
+  background-image: conic-gradient(
+    var(--desk-dither) 25%,
+    transparent 0 50%,
+    var(--desk-dither) 0 75%,
+    transparent 0
+  );
+  background-size: calc(var(--px) * 2) calc(var(--px) * 2);
+}
+
+button {
+  font: inherit;
+}

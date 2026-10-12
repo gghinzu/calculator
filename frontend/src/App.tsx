@@ -1,8 +1,11 @@
-// Placeholder shell; the retro calculator UI is built in the next step.
+import styles from './App.module.css'
+import { Calculator } from './components/Calculator'
+
 function App() {
   return (
-    <main>
-      <h1>Retro Calculator</h1>
+    <main className={styles.desktop}>
+      <Calculator />
+      <p className={styles.hint}>Your keyboard works too: numbers, + − * / ^ %, Enter, Backspace, Esc.</p>
     </main>
   )
 }

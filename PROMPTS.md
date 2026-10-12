@@ -151,6 +151,58 @@ It also raised an open UI question: what `200 + 10 %` should mean.
 - **CI:** a second job runs `npm ci`, lint, type-check/build and tests with coverage.
 - **Dependency audit:** `npm audit` flagged known vulnerabilities in the scaffolded Vitest 3 dev dependencies, so the AI upgraded Vitest and its coverage plugin to the patched 4.1.11. The audit is now clean.
 
+## 12. Frontend: retro calculator UI
+
+**Prompt:** No new prompt. This step implements the decisions in sections 4, 5 and 10.
+
+**Outcome:** The AI built the UI and checked it in a headless browser at desktop and phone widths. I reviewed the screenshots and the code.
+- **Architecture:**
+  - A pure reducer (`calculatorReducer.ts`) owns all calculator state but never does arithmetic. When a key needs math, it records an API request.
+  - The `useCalculator` hook sends the request and feeds the result or error back.
+  - Typing digits, the decimal point, the sign and backspace are plain string edits done locally. Every calculation goes through the backend.
+- **Behaviour:**
+  - Immediate evaluation, like a pocket calculator: `2 + 3 ×` shows `5`. There is no operator precedence and there are no parentheses (out of scope, see section 5).
+  - Repeated `=` repeats the last operation, and pressing a different operator replaces the pending one.
+  - The `%` key follows the iPhone rule agreed in section 10.
+  - Input is limited to 15 digits, the precision float64 can represent.
+- **Display:**
+  - Results are formatted to fit the screen with thousands separators, switching to exponent notation (`9.99999998e+17`) when needed.
+  - Tiny numbers are never rounded down to `0`, and `NaN`, `Infinity` and `-0` never reach the user.
+  - Errors show a short message (`Can't divide by 0`), keep the attempted expression visible, and give the window a brief shake (disabled under reduced motion).
+- **Loading:** a blinking block cursor is shown while waiting for the server. Keys are disabled except C, which cancels the request. Late responses to cancelled requests are ignored.
+- **Design:**
+  - A retro pixel window inspired by the Pinterest reference: periwinkle title bar and screen, bevelled keys with notched pixel corners drawn in CSS (no images), a hard pixel drop shadow and a dithered desktop background.
+  - The `=` key is the only accent colour.
+  - CSS Modules per component, with design tokens as CSS variables.
+- **Font:** the first choice, Pixelify Sans, made `5` look like `S` and `C` look like `0`. After a side-by-side comparison of five pixel fonts, the AI switched to Jersey 10, whose digits are unambiguous. The font is self-hosted through Fontsource, so no external requests are made.
+- **Accessibility:**
+  - Every key has an accessible name, and the result is announced through an `aria-live` region.
+  - Focus is drawn inside the keys, because `clip-path` would cut off a normal outline.
+  - Full keyboard support, with the matching on-screen key flashing when pressed.
+- **Responsive:** a centred window on desktop and full width on phones, where the keyboard hint is hidden.
+- **Tests:** 80 frontend tests in total:
+  - formatting
+  - every reducer path (chaining, repeat `=`, percent, errors, cancellation)
+  - error messages
+  - component tests with a mocked API: clicks, keyboard, loading, cancellation and error display
+
+  Frontend coverage is 98% of statements.
+
+## 13. Debugging "Something went wrong" locally
+
+**Prompt (translated):**
+> Even after restarting the backend and frontend in the terminal and clearing the browser cache, the calculator doesn't work. For example, when I try 3×9 the screen says "Something went wrong". How do I inspect in Safari? *(followed by the Network panel details of the failing request and the Vite terminal output: `http proxy error: /api/v1/multiply … ECONNREFUSED`)*
+
+**Outcome:** The AI read the response headers:
+- The `500` had a `text/plain` empty body and an `Access-Control-Allow-Origin` header.
+- Neither can come from the Go backend, which always answers in JSON and has CORS disabled by default.
+
+So the `500` came from the Vite dev proxy, and `ECONNREFUSED` confirmed that nothing was listening on port 8080: the backend wasn't running. There was no bug in the code, but the incident exposed two UX gaps, which were fixed:
+- A 5xx response without the API's JSON envelope now means "the server is unreachable" (`network_error`). The user sees **Server offline** instead of a generic message.
+- Failed calculations are logged to the browser console with the operation, operands and underlying error, so the cause is visible without guessing.
+
+I reproduced the scenario by stopping the backend, which now shows "Server offline". Tests were added for both cases.
+
 ---
 
 *(New prompts will be appended below as the work continues. Only prompts that shaped the project itself are logged; routine Git/tooling questions are omitted.)*

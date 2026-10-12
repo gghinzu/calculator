@@ -16,6 +16,7 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@fontsource/jersey-10": "^5.2.6",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },

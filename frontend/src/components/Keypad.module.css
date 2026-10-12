@@ -1,0 +1,100 @@
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: calc(var(--px) * 3);
+}
+
+/* Raised pixel key: outline with notched corners, light bevel top-left,
+   shade bottom-right. */
+.key {
+  height: 52px;
+  padding: 0;
+  border: var(--px) solid var(--outline);
+  background: var(--key);
+  color: var(--key-ink);
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 1;
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+  box-shadow:
+    inset var(--px) var(--px) 0 var(--key-light),
+    inset calc(var(--px) * -1) calc(var(--px) * -1) 0 var(--key-shade);
+  clip-path: polygon(
+    var(--px) 0,
+    calc(100% - var(--px)) 0,
+    calc(100% - var(--px)) var(--px),
+    100% var(--px),
+    100% calc(100% - var(--px)),
+    calc(100% - var(--px)) calc(100% - var(--px)),
+    calc(100% - var(--px)) 100%,
+    var(--px) 100%,
+    var(--px) calc(100% - var(--px)),
+    0 calc(100% - var(--px)),
+    0 var(--px),
+    var(--px) var(--px)
+  );
+}
+
+.wide {
+  grid-column: span 2;
+}
+
+.operator {
+  background: var(--key-operator);
+}
+
+.function {
+  background: var(--key-function);
+  font-size: 26px;
+}
+
+/* The one accent: = shares the title bar's colour. */
+.equals {
+  background: var(--title);
+  color: var(--title-ink);
+  box-shadow:
+    inset var(--px) var(--px) 0 var(--title-light),
+    inset calc(var(--px) * -1) calc(var(--px) * -1) 0 var(--screen-ink);
+}
+
+/* Pressed: the bevel flips and the label sinks one pixel unit. */
+.key:active:not(:disabled),
+.pressed {
+  padding-top: calc(var(--px) * 2);
+  box-shadow: inset var(--px) var(--px) 0 var(--key-shade);
+}
+
+.equals:active:not(:disabled),
+.equals.pressed {
+  box-shadow: inset var(--px) var(--px) 0 var(--screen-ink);
+}
+
+.key:disabled {
+  cursor: progress;
+  color: var(--key-shade);
+}
+
+.equals:disabled {
+  color: var(--title-light);
+}
+
+/* clip-path would cut off an outline, so focus is drawn inside the key. */
+.key:focus-visible {
+  outline: none;
+  box-shadow:
+    inset 0 0 0 var(--px) var(--focus),
+    inset calc(var(--px) * -2) calc(var(--px) * -2) 0 var(--key-shade);
+}
+
+@media (max-width: 400px) {
+  .key {
+    height: auto;
+    aspect-ratio: 1 / 0.8;
+  }
+
+  .wide {
+    aspect-ratio: auto;
+  }
+}

@@ -1,0 +1,114 @@
+/* The hard pixel drop shadow lives on a wrapper: a filter on the clipped
+   element itself would be clipped away too. */
+.frame {
+  width: min(100%, 340px);
+  filter: drop-shadow(calc(var(--px) * 2) calc(var(--px) * 2) 0 var(--drop-shadow));
+}
+
+/* The window: an outlined box whose corners are notched by one pixel unit. */
+.window {
+  background: var(--window);
+  border: var(--px) solid var(--outline);
+  clip-path: polygon(
+    var(--px) 0,
+    calc(100% - var(--px)) 0,
+    calc(100% - var(--px)) var(--px),
+    100% var(--px),
+    100% calc(100% - var(--px)),
+    calc(100% - var(--px)) calc(100% - var(--px)),
+    calc(100% - var(--px)) 100%,
+    var(--px) 100%,
+    var(--px) calc(100% - var(--px)),
+    0 calc(100% - var(--px)),
+    0 var(--px),
+    var(--px) var(--px)
+  );
+}
+
+.titleBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: calc(var(--px) * 2) calc(var(--px) * 3);
+  background: var(--title);
+  box-shadow: inset 0 var(--px) 0 var(--title-light), inset 0 calc(var(--px) * -1) 0 var(--outline);
+  color: var(--title-ink);
+}
+
+.title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+.titleButtons {
+  display: flex;
+  gap: calc(var(--px) * 2);
+}
+
+/* Decorative window controls, drawn with backgrounds only. */
+.titleButton {
+  position: relative;
+  width: calc(var(--px) * 6);
+  height: calc(var(--px) * 6);
+  background: var(--title-light);
+  box-shadow: inset calc(var(--px) * -1) calc(var(--px) * -1) 0 var(--outline);
+}
+
+.titleButton::after {
+  content: '';
+  position: absolute;
+  background: var(--title-ink);
+}
+
+.minimize::after {
+  left: var(--px);
+  right: calc(var(--px) * 2);
+  bottom: calc(var(--px) * 2);
+  height: var(--px);
+}
+
+.maximize::after {
+  inset: var(--px) calc(var(--px) * 2) calc(var(--px) * 2) var(--px);
+  background: transparent;
+  box-shadow: inset 0 0 0 var(--px) var(--title-ink);
+}
+
+.close::after {
+  inset: var(--px) calc(var(--px) * 2) calc(var(--px) * 2) var(--px);
+  background:
+    linear-gradient(45deg, transparent 42%, var(--title-ink) 42% 58%, transparent 58%),
+    linear-gradient(-45deg, transparent 42%, var(--title-ink) 42% 58%, transparent 58%);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--px) * 5);
+  padding: calc(var(--px) * 5);
+  box-shadow: inset var(--px) var(--px) 0 var(--window-light);
+}
+
+/* A short nudge when a calculation fails. */
+.shake {
+  animation: shake 240ms steps(4) 1;
+}
+
+@keyframes shake {
+  25% {
+    transform: translateX(calc(var(--px) * -2));
+  }
+  50% {
+    transform: translateX(calc(var(--px) * 2));
+  }
+  75% {
+    transform: translateX(calc(var(--px) * -1));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shake {
+    animation: none;
+  }
+}
