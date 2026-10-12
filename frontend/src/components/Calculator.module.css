@@ -1,8 +1,37 @@
-/* The hard pixel drop shadow lives on a wrapper: a filter on the clipped
-   element itself would be clipped away too. */
+/* The notched pixel outline, shared by the window and its shadow. */
+.frame,
+.window {
+  --notched: polygon(
+    var(--px) 0,
+    calc(100% - var(--px)) 0,
+    calc(100% - var(--px)) var(--px),
+    100% var(--px),
+    100% calc(100% - var(--px)),
+    calc(100% - var(--px)) calc(100% - var(--px)),
+    calc(100% - var(--px)) 100%,
+    var(--px) 100%,
+    var(--px) calc(100% - var(--px)),
+    0 calc(100% - var(--px)),
+    0 var(--px),
+    var(--px) var(--px)
+  );
+}
+
+/* The hard pixel drop shadow is a plain shape behind the window, offset by
+   three pixel units. (A CSS `filter: drop-shadow` would be simpler, but
+   Safari can leave its shadow painted on screen after the window closes.) */
 .frame {
+  position: relative;
   width: min(100%, calc(var(--px) * 114));
-  filter: drop-shadow(calc(var(--px) * 3) calc(var(--px) * 3) 0 var(--drop-shadow));
+}
+
+.frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translate(calc(var(--px) * 3), calc(var(--px) * 3));
+  background: var(--drop-shadow);
+  clip-path: var(--notched);
 }
 
 /* Every size in the window is a multiple of --px, so maximizing is just a
@@ -18,25 +47,13 @@
 /* The window: an outlined box whose corners are notched by one pixel unit.
    A shaded band on the right and bottom gives the body some thickness. */
 .window {
+  position: relative;
   background: var(--window);
   box-shadow:
     inset calc(var(--px) * -2) 0 0 var(--window-shade),
     inset 0 calc(var(--px) * -2) 0 var(--window-shade);
   border: var(--px) solid var(--outline);
-  clip-path: polygon(
-    var(--px) 0,
-    calc(100% - var(--px)) 0,
-    calc(100% - var(--px)) var(--px),
-    100% var(--px),
-    100% calc(100% - var(--px)),
-    calc(100% - var(--px)) calc(100% - var(--px)),
-    calc(100% - var(--px)) 100%,
-    var(--px) 100%,
-    var(--px) calc(100% - var(--px)),
-    0 calc(100% - var(--px)),
-    0 var(--px),
-    var(--px) var(--px)
-  );
+  clip-path: var(--notched);
 }
 
 .titleBar {

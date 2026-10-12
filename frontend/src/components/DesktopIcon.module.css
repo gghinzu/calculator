@@ -13,7 +13,6 @@
 
 .sprite {
   display: block;
-  filter: drop-shadow(var(--px) var(--px) 0 var(--drop-shadow));
 }
 
 .label {

@@ -73,3 +73,35 @@ jobs:
 
       - name: Test
         run: npm run test:coverage
+
+  docker:
+    name: Docker image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build image
+        run: docker build -t retro-calculator .
+
+      - name: Smoke test the container
+        run: |
+          docker run -d --name calc -p 8080:8080 retro-calculator
+
+          # Wait for Docker's own HEALTHCHECK (the binary's `healthcheck` mode).
+          for i in $(seq 1 30); do
+            status=$(docker inspect -f '{{.State.Health.Status}}' calc)
+            [ "$status" = healthy ] && break
+            sleep 1
+          done
+          echo "health: $status"
+          [ "$status" = healthy ]
+
+          # The frontend is served...
+          curl -fsS http://localhost:8080/ | grep -q '<title>Retro Calculator</title>'
+          # ...and the API answers next to it.
+          curl -fsS -X POST http://localhost:8080/api/v1/divide -d '{"a":100,"b":3}' \
+            | grep -q '"result":33.3333333333333'
+
+      - name: Container logs
+        if: always()
+        run: docker logs calc || true
