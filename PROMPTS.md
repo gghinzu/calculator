@@ -73,6 +73,34 @@ The original prompts were written in Turkish. They are translated to English bel
 
 **Outcome:** Tests stay in the repository, since they are an explicit deliverable. They sit next to the code they test (`*_test.go`, `*.test.tsx`) and are excluded from production builds. A coverage report will be generated and committed under `docs/coverage/`, with a summary in the README.
 
+## 7. Backend: calculator service
+
+**Prompt:** Implement the backend core based on the decisions above. *(step-by-step implementation request)*
+
+**Outcome:** The AI generated `internal/domain/service`, which I reviewed:
+- `CalculatorServicePort` interface plus a stateless `CalculatorService`, following the port pattern of my earlier project.
+- Domain errors (`ErrDivisionByZero`, `ErrUndefinedResult`, `ErrResultOutOfRange`, `ErrInvalidOperand`) are kept free of HTTP concerns.
+- Results are rounded to 15 significant digits, so `0.1 + 0.2 = 0.3` and `100 / 3 = 33.3333333333333`. Negative zero is normalized to `0`.
+- Percentage is computed as `a / 100 * b` to avoid intermediate overflow.
+- Table-driven unit tests cover the service at 100%.
+
+## 8. Backend: HTTP API
+
+**Prompt (translated):**
+> I merged it. Meanwhile, keep writing the prompts file too, don't forget it when needed.
+
+**Outcome:** The AI built the HTTP layer on the same layered architecture as my earlier project (`cmd → router → handler → service`, plus `dto`, `server` response envelope, and centralized errors). It uses only the standard library:
+- Go 1.22+ method-aware `net/http` routing replaces Gin, and `os.Getenv` replaces viper. The old `internal/error` package is renamed to `apperror` so it doesn't shadow Go's built-in `error`.
+- One endpoint per operation under `/api/v1/`, plus `GET /health`.
+- Strict request decoding:
+  - unknown fields, trailing data, wrong types and out-of-range numbers are rejected
+  - bodies are capped at 1 KiB
+  - missing operands are told apart from `0` with pointer fields
+- Status codes: `400`/`413` for malformed requests, `422` for well-formed but mathematically undefined requests, and `500` with internal details hidden.
+- Middleware: panic recovery, structured request logging (`slog`), and opt-in CORS.
+- HTTP server timeouts and graceful shutdown on SIGINT/SIGTERM.
+- Handler, router, middleware, error-mapping and config tests. Total backend coverage is 99.4%.
+
 ---
 
 *(New prompts will be appended below as the work continues. Only prompts that shaped the project itself are logged; routine Git/tooling questions are omitted.)*
