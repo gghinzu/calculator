@@ -22,5 +22,7 @@ backend/server
 node_modules/
 frontend/dist/
 frontend/coverage/
+# Vite's dependency pre-bundling cache
+.vite/
 *.log
 npm-debug.log*
