@@ -318,6 +318,25 @@ I reproduced the scenario by stopping the backend, which now shows "Server offli
 - **Verification:** the AI's sandbox cannot pull images from Docker Hub, so it ran every Dockerfile step manually with the same commands and tested the result: index served without caching, hashed assets immutable, favicon, API, JSON 404 for unknown API paths, the healthcheck exit codes, and graceful shutdown. A new **Docker image** CI job builds the real image on GitHub's runners on every pull request, waits for the container to report healthy, and checks that both the page and an API call work.
 - **Tests:** backend tests cover static serving, cache headers and keeping API errors as JSON next to the frontend, as well as the healthcheck command. Backend coverage is 99.5%.
 
+## 22. README and coverage report
+
+**Prompt:** No new prompt. This step implements the decision in section 3 to write the README last, and the coverage report agreed in section 6.
+
+**Outcome:**
+- **README:** written from the finished code. It covers:
+  - Docker quick start and running each side locally
+  - configuration
+  - project structure
+  - the full API reference with real `curl` examples (each one was run against the server to check the output) and every error code
+  - testing and CI
+  - the design decisions behind the code
+  - assumptions and known limitations
+  - AI usage, linking to this file
+- **Coverage reports:** HTML and text reports for both layers are committed under `docs/coverage/` (backend 99.5%, frontend 98.6% statements) and can be regenerated with `make coverage`. The text reporter was set to list every file, not only those below 100%.
+- **Makefile:** one-word commands for development, tests, coverage and Docker (`make help` lists them).
+- **Screenshots** of the calculator and its five themes for the README.
+- The leftover `favicon-32.png` (unused since the switch to `favicon.ico`) is removed.
+
 ---
 
-*(New prompts will be appended below as the work continues. Only prompts that shaped the project itself are logged; routine Git/tooling questions are omitted.)*
+*Only prompts that shaped the project itself are logged above; routine Git and tooling questions (branch names, commit messages, GitHub Desktop usage, local setup) are omitted.*
