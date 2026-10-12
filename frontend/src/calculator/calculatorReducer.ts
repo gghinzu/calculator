@@ -19,7 +19,7 @@ export const MAX_INPUT_DIGITS = 15
 /** Length used for numbers inside the small expression line. */
 const EXPRESSION_NUMBER_LENGTH = 12
 
-export const OPERATOR_SYMBOLS: Record<BinaryOperation, string> = {
+const OPERATOR_SYMBOLS: Record<BinaryOperation, string> = {
   add: '+',
   subtract: '−',
   multiply: '×',

@@ -338,6 +338,19 @@ I reproduced the scenario by stopping the backend, which now shows "Server offli
 - The leftover `favicon-32.png` (unused since the switch to `favicon.ico`) is removed.
 - **Final check on a fresh clone:** cloning the branch from GitHub and running `make test` failed on the frontend, because its dependencies were not installed yet, which is exactly what a reviewer would hit. The frontend targets in the `Makefile` now install dependencies automatically (only when `package-lock.json` changes), so one `make test` works from a clean checkout.
 
+## 23. Final clean-up
+
+**Prompt (translated):**
+> Are there any unnecessary files, comments or anything like that? Let's check that one last time before sending.
+
+**Outcome:** The AI scanned every tracked file for unused files, leftover `TODO`/debug statements, unused CSS variables and classes, and unused exports. No unnecessary files or debug statements were found. Four small leftovers were removed:
+- a duplicated comment in `Display.module.css`;
+- the `--title-shade` colour, defined in all five themes but unused since the 3D keys started deriving their side colour with `color-mix()`;
+- a `press` wrapper in `Calculator.tsx` that only called `dispatch`;
+- an export (`OPERATOR_SYMBOLS`) used only inside its own file.
+
+All checks still pass, and the coverage reports were regenerated.
+
 ---
 
 *Only prompts that shaped the project itself are logged above; routine Git and tooling questions (branch names, commit messages, GitHub Desktop usage, local setup) are omitted.*

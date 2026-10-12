@@ -1,5 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
-import type { CalculatorAction } from '../calculator/calculatorReducer'
+import { useEffect, useRef, useState } from 'react'
 import { keyForShortcut, type KeyDefinition } from '../calculator/keys'
 import { useCalculator } from '../calculator/useCalculator'
 import styles from './Calculator.module.css'
@@ -24,13 +23,6 @@ export function Calculator({ onClose, autoFocus = false }: CalculatorProps) {
   const flashTimer = useRef<number | undefined>(undefined)
   const windowRef = useRef<HTMLElement>(null)
 
-  const press = useCallback(
-    (action: CalculatorAction) => {
-      dispatch(action)
-    },
-    [dispatch],
-  )
-
   useEffect(() => {
     if (autoFocus) windowRef.current?.focus()
   }, [autoFocus])
@@ -47,7 +39,7 @@ export function Calculator({ onClose, autoFocus = false }: CalculatorProps) {
       // Stops Enter from also "clicking" a focused key, and "/" from
       // opening the browser's quick-find.
       event.preventDefault()
-      press(key.action)
+      dispatch(key.action)
 
       setFlashedKey(key.id)
       window.clearTimeout(flashTimer.current)
@@ -61,7 +53,7 @@ export function Calculator({ onClose, autoFocus = false }: CalculatorProps) {
       window.clearTimeout(flashTimer.current)
       setFlashedKey(null)
     }
-  }, [press, minimized])
+  }, [dispatch, minimized])
 
   return (
     <div className={`${styles.frame} ${maximized ? styles.maximized : ''}`}>
@@ -109,7 +101,7 @@ export function Calculator({ onClose, autoFocus = false }: CalculatorProps) {
         {/* Hidden rather than unmounted, so the number on screen survives. */}
         <div className={`${styles.body} ${hasError ? styles.shake : ''}`} hidden={minimized}>
           <Display expression={expression} value={display} isLoading={isLoading} hasError={hasError} />
-          <Keypad onPress={press} disabled={isLoading} flashedKey={flashedKey} />
+          <Keypad onPress={dispatch} disabled={isLoading} flashedKey={flashedKey} />
         </div>
       </section>
     </div>
