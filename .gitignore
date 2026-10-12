@@ -1,0 +1,26 @@
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# --- Environment ---
+.env
+.env.*
+!.env.example
+
+# --- Go (backend) ---
+backend/bin/
+backend/server
+*.exe
+*.test
+# Raw coverage profiles (the published report lives in docs/coverage/)
+*.out
+
+# --- Node / React (frontend) ---
+node_modules/
+frontend/dist/
+frontend/coverage/
+*.log
+npm-debug.log*
