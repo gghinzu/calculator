@@ -9,7 +9,8 @@ import (
 
 // New wires every route and the middleware stack.
 // It uses the standard library's method-aware routing (Go 1.22+), so wrong
-// methods get a 405 and unknown paths a 404 without any framework.
+// methods get a 405 and unknown paths a 404 without any framework; both are
+// returned in the standard JSON error envelope.
 func New(h *handler.CalculatorHandler, corsOrigin string) http.Handler {
 	mux := http.NewServeMux()
 
@@ -23,7 +24,7 @@ func New(h *handler.CalculatorHandler, corsOrigin string) http.Handler {
 	mux.HandleFunc("POST /api/v1/sqrt", h.Sqrt)
 	mux.HandleFunc("POST /api/v1/percentage", h.Percentage)
 
-	return middleware.Chain(mux,
+	return middleware.Chain(jsonRouteErrors(mux),
 		middleware.Recover,
 		middleware.Logger,
 		middleware.CORS(corsOrigin),

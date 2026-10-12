@@ -28,11 +28,13 @@ func New(status int, code, message string) AppError {
 	return AppError{Status: status, Code: code, Message: message}
 }
 
-// Request errors: the request itself is malformed (400 / 413).
+// Request errors: the request itself is malformed or unroutable (400 / 404 / 405 / 413).
 var (
 	EmptyRequestBody = New(http.StatusBadRequest, "empty_request_body", "request body is required")
 	InvalidJSON      = New(http.StatusBadRequest, "invalid_json", "request body must be a single valid JSON object")
 	RequestTooLarge  = New(http.StatusRequestEntityTooLarge, "request_too_large", "request body is too large")
+	RouteNotFound    = New(http.StatusNotFound, "route_not_found", "no endpoint matches this path")
+	MethodNotAllowed = New(http.StatusMethodNotAllowed, "method_not_allowed", "this endpoint does not support the request method")
 )
 
 // Calculation errors: the request is well-formed but the math is not
