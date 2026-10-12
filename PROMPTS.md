@@ -222,6 +222,28 @@ I reproduced the scenario by stopping the backend, which now shows "Server offli
 - **Title:** kept as "Retro Calculator", as I suggested; the AI agreed.
 - Background tests were added; 87 frontend tests pass.
 
+## 15. Random themes and pixel icons on every load
+
+**Prompt (translated):**
+> Random pixel icons like these could be added *(two more screenshots of my Pinterest board: tea cup, arcade machine, Game Boy, books, envelope, gift, calculator, clock, flowers…)*. In fact, every time the page is refreshed, the colour palette and the icons could change too.
+
+**Outcome:**
+- **Themes:** five pastel themes, none of them purple: Strawberry, Matcha, Peach Soda, Lemon Sky and Cherry Cola.
+  - Each defines the full set of colour variables in `theme/themes.css`; JavaScript only chooses the theme's name.
+  - A theme is picked at random before React renders, so there is no flash of the wrong colours.
+  - The same theme never comes twice in a row. The last theme is remembered in `localStorage`, with a safe fallback when storage is blocked.
+  - The mobile browser bar colour (`theme-color`) follows the theme.
+- **Icon library:** 14 pixel icons drawn as text pixel maps with colour slots, in the spirit of the moodboard: heart, star, cloud, tulip, envelope, tea cup, CD, Game Boy, mini calculator, gift, cat, book, mushroom and clock.
+- **Random scene:** every page load builds a new scene from a random seed, with 12 different icons spread across evenly spaced columns (so they never bunch up). Each icon gets a random order of the theme's sprite colours, a random size and a random speed. A seeded generator (mulberry32) makes any scene reproducible from its seed.
+- **Tests:**
+  - every sprite map is valid
+  - scenes are deterministic per seed and vary between seeds
+  - theme picking never repeats and works without storage
+  - a consistency test parses `themes.css` and checks that every theme defines exactly the same variables
+  - a check that no desktop colour is purple
+
+  119 frontend tests in total.
+
 ---
 
 *(New prompts will be appended below as the work continues. Only prompts that shaped the project itself are logged; routine Git/tooling questions are omitted.)*

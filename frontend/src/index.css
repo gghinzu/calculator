@@ -1,44 +1,8 @@
-/* Design tokens. One palette, one typeface: a pastel pixel window (pink,
-   mint, butter, cream) floating on a dim teal night desktop, so the
-   calculator is the brightest thing on the page. */
+/* Layout tokens and typography. Colours live in theme/themes.css: one of
+   several pastel themes is picked on every page load. */
 :root {
   /* Pixel unit: every border, bevel and notch is a multiple of this. */
   --px: 3px;
-
-  --desk: #1f3440;
-  --desk-dither: #233a47;
-  --desk-ink: #b9cfca;
-
-  --sprite-pink: #f4a6c0;
-  --sprite-mint: #9fdcc4;
-  --sprite-butter: #f6dc8a;
-  --sprite-cream: #fff3e3;
-
-  --window: #fbf1e3;
-  --window-light: #fffaf3;
-  --window-shade: #dcc8ad;
-  --outline: #3a3238;
-  --drop-shadow: #12212a;
-
-  --title: #ec88ab;
-  --title-light: #f7b6cc;
-  --title-shade: #c45f85;
-  --title-ink: #ffffff;
-
-  --screen: #c3ead7;
-  --screen-shade: #93cfb5;
-  --screen-ink: #1f5246;
-  --screen-dim: #4b8573;
-  --screen-error: #b8325f;
-
-  --key: #fff8ee;
-  --key-light: #ffffff;
-  --key-shade: #d8c4a8;
-  --key-ink: #4a3f45;
-  --key-operator: #d3f0e2;
-  --key-function: #fbe8b4;
-
-  --focus: #1f5246;
 
   font-family: 'Jersey 10', ui-monospace, monospace;
   color: var(--key-ink);
