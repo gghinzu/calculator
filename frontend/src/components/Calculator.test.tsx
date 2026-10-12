@@ -170,17 +170,22 @@ describe('Calculator', () => {
 })
 
 describe('Window controls', () => {
-  it('minimize hides the calculator body but keeps its state', async () => {
+  it('minimize leaves only the title, which restores the window with its state', async () => {
     const user = userEvent.setup()
     render(<App />)
     await clickKeys(user, '4', '2')
 
     await user.click(screen.getByRole('button', { name: 'Minimize' }))
     expect(screen.queryByRole('button', { name: '7' })).not.toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Restore' })).toHaveAttribute('aria-expanded', 'false')
+    // No size or close controls on a minimized window.
+    for (const name of ['Minimize', 'Maximize', 'Close']) {
+      expect(screen.queryByRole('button', { name })).not.toBeInTheDocument()
+    }
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Calculator')
 
-    await user.click(screen.getByRole('button', { name: 'Restore' }))
+    await user.click(screen.getByRole('button', { name: 'Restore Calculator' }))
     expect(display()).toHaveTextContent('42')
+    expect(screen.getByRole('button', { name: 'Minimize' })).toBeInTheDocument()
   })
 
   it('ignores the keyboard while minimized', async () => {
@@ -189,7 +194,7 @@ describe('Window controls', () => {
     await user.click(screen.getByRole('button', { name: 'Minimize' }))
 
     await user.keyboard('99')
-    await user.click(screen.getByRole('button', { name: 'Restore' }))
+    await user.click(screen.getByRole('button', { name: 'Restore Calculator' }))
 
     expect(display()).toHaveTextContent('0')
   })
@@ -199,7 +204,7 @@ describe('Window controls', () => {
     render(<App />)
     await user.keyboard('2')
     await user.click(screen.getByRole('button', { name: 'Minimize' }))
-    await user.click(screen.getByRole('button', { name: 'Restore' }))
+    await user.click(screen.getByRole('button', { name: 'Restore Calculator' }))
 
     expect(screen.getByRole('button', { name: '2' }).className).not.toMatch(/pressed/)
   })
@@ -215,14 +220,6 @@ describe('Window controls', () => {
 
     await user.click(screen.getByRole('button', { name: 'Restore size' }))
     expect(screen.getByRole('button', { name: 'Maximize' })).toHaveAttribute('aria-pressed', 'false')
-  })
-
-  it('maximize also restores a minimized window', async () => {
-    const user = userEvent.setup()
-    render(<App />)
-    await user.click(screen.getByRole('button', { name: 'Minimize' }))
-    await user.click(screen.getByRole('button', { name: 'Maximize' }))
-    expect(screen.getByRole('button', { name: '7' })).toBeVisible()
   })
 
   it('close leaves a desktop icon that reopens a fresh calculator', async () => {

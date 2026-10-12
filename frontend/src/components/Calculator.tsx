@@ -66,34 +66,45 @@ export function Calculator({ onClose, autoFocus = false }: CalculatorProps) {
   return (
     <div className={`${styles.frame} ${maximized ? styles.maximized : ''}`}>
       <section ref={windowRef} className={styles.window} aria-label="Calculator" tabIndex={-1}>
-        <header className={styles.titleBar}>
-          <h1 className={styles.title}>Calculator</h1>
-          <div className={styles.titleButtons}>
+        {minimized ? (
+          // Minimized: only the title remains, as one button that restores the
+          // window (like a taskbar entry). Size and close make no sense here.
+          <h1 className={styles.titleBar}>
             <button
               type="button"
-              className={`${styles.titleButton} ${styles.minimize}`}
-              aria-label={minimized ? 'Restore' : 'Minimize'}
-              aria-expanded={!minimized}
-              onClick={() => setMinimized((m) => !m)}
-            />
-            <button
-              type="button"
-              className={`${styles.titleButton} ${styles.maximize}`}
-              aria-label={maximized ? 'Restore size' : 'Maximize'}
-              aria-pressed={maximized}
-              onClick={() => {
-                setMaximized((m) => !m)
-                setMinimized(false)
-              }}
-            />
-            <button
-              type="button"
-              className={`${styles.titleButton} ${styles.close}`}
-              aria-label="Close"
-              onClick={onClose}
-            />
-          </div>
-        </header>
+              className={styles.restore}
+              aria-label="Restore Calculator"
+              onClick={() => setMinimized(false)}
+            >
+              Calculator
+            </button>
+          </h1>
+        ) : (
+          <header className={styles.titleBar}>
+            <h1 className={styles.title}>Calculator</h1>
+            <div className={styles.titleButtons}>
+              <button
+                type="button"
+                className={`${styles.titleButton} ${styles.minimize}`}
+                aria-label="Minimize"
+                onClick={() => setMinimized(true)}
+              />
+              <button
+                type="button"
+                className={`${styles.titleButton} ${styles.maximize}`}
+                aria-label={maximized ? 'Restore size' : 'Maximize'}
+                aria-pressed={maximized}
+                onClick={() => setMaximized((m) => !m)}
+              />
+              <button
+                type="button"
+                className={`${styles.titleButton} ${styles.close}`}
+                aria-label="Close"
+                onClick={onClose}
+              />
+            </div>
+          </header>
+        )}
 
         {/* Hidden rather than unmounted, so the number on screen survives. */}
         <div className={`${styles.body} ${hasError ? styles.shake : ''}`} hidden={minimized}>

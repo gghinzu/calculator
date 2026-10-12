@@ -284,6 +284,13 @@ I reproduced the scenario by stopping the backend, which now shows "Server offli
 
 **Outcome:** The ± key now does nothing while the entry is zero (`0`, `0.`, `0.00`, or a result of 0), so the display can never show `-0`. The now-unreachable `-0` input branch was removed, and tests cover the new rule.
 
+## 19. Minimized window shows only its title
+
+**Prompt (translated):**
+> Also, when the calculator is minimized, I think only its title should remain. The minimize, maximize and close buttons still stay there, which doesn't fit at all. For example, while it's fully minimized you can press maximize and it opens up large, and I don't think that's needed, because that kind of functionality doesn't normally exist.
+
+**Outcome:** A minimized window now shows only its title. The whole title bar becomes a single "Restore Calculator" button, like a taskbar entry, and the minimize, maximize and close controls are hidden until the window is restored. The earlier "maximize also restores a minimized window" behaviour was removed. Tests check that no size or close controls are available while the window is minimized.
+
 ---
 
 *(New prompts will be appended below as the work continues. Only prompts that shaped the project itself are logged; routine Git/tooling questions are omitted.)*
