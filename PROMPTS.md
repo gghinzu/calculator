@@ -136,6 +136,21 @@ It also raised an open UI question: what `200 + 10 %` should mean.
   - In `a × b %` and `a ÷ b %`, `b %` means `b / 100`.
   - On its own, `b %` gives `b / 100`.
 
+## 11. Frontend: project setup and API client
+
+**Prompt:** No new prompt. This step implements the decisions in sections 3–5.
+
+**Outcome:** The AI scaffolded the frontend with Vite, React 19 and TypeScript (strict), then removed the template boilerplate. It added:
+- **Testing:** Vitest + React Testing Library + jsdom, with V8 coverage.
+- **Dev proxy:** the Vite dev server proxies `/api` and `/health` to the Go backend, so the browser talks to a single origin and CORS stays disabled.
+- **Typed API client (`src/api/calculatorApi.ts`):**
+  - Every call either resolves with a finite number or rejects with a single `ApiError` type that carries the backend error code and HTTP status.
+  - Network failures, timeouts and malformed responses get their own client-side codes.
+  - Caller-initiated aborts are passed through, so stale requests can be cancelled.
+- **Tests:** unit tests for the API client, with `fetch` mocked.
+- **CI:** a second job runs `npm ci`, lint, type-check/build and tests with coverage.
+- **Dependency audit:** `npm audit` flagged known vulnerabilities in the scaffolded Vitest 3 dev dependencies, so the AI upgraded Vitest and its coverage plugin to the patched 4.1.11. The audit is now clean.
+
 ---
 
 *(New prompts will be appended below as the work continues. Only prompts that shaped the project itself are logged; routine Git/tooling questions are omitted.)*
